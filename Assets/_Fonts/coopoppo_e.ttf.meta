@@ -1,0 +1,21 @@
+fileFormatVersion: 2
+guid: 2a6bb58017e3b4a1c9444e2cee23fa69
+timeCreated: 1508063990
+licenseType: Free
+TrueTypeFontImporter:
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: coopoppo edge
+  fontNames:
+  - coopoppo edge
+  fallbackFontReferences: []
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

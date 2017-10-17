@@ -1,0 +1,22 @@
+fileFormatVersion: 2
+guid: 3fbd92d2671e84c12b49e442748b2d49
+timeCreated: 1508064593
+licenseType: Free
+TrueTypeFontImporter:
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: mitubachi
+  fontNames:
+  - mitubachi
+  fallbackFontReferences:
+  - {fileID: 12800000, guid: 37386ef72aa4f43a893d9420396d7518, type: 3}
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
