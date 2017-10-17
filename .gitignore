@@ -37,3 +37,7 @@ sysinfo.txt
 
 .vscode
 .idea
+
+
+Assets/Libs/**
+!Assets/Libs/.gitkeep
