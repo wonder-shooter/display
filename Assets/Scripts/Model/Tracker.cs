@@ -1,9 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 
-public class TrackerData {
-	public enum Color { Yello, Green, Pink };
-	public string ID {
+public class Tracker {
+	public string TrackerID {
 		get; set;
 	}
 	public float X {

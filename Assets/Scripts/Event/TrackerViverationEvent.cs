@@ -2,5 +2,5 @@
 using UnityEngine.Events;
 
 [System.Serializable]
-public class TrackerViverationEvent : UnityEvent<TrackerData.Color> {
+public class TrackerViverationEvent : UnityEvent<Player.ColorType> {
 }

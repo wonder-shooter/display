@@ -2,5 +2,5 @@
 using UnityEngine.Events;
 
 [System.Serializable]
-public class TrackerTriggerEvent : UnityEvent<TrackerData.Color> {
+public class TrackerPositionEvent : UnityEvent<Tracker> {
 }

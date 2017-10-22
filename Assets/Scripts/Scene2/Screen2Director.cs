@@ -2,22 +2,37 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
 public class Screen2Director : MonoBehaviour {
 
-	// Use this for initialization
-	void Start () {
-		
+	public Text startText;
+	public Text nextText;
+	
+	private IEnumerator ShowStartMessage() {
+		yield return new WaitForSeconds(0.5f);
+		startText.gameObject.SetActive(true);
+		yield return new WaitForSeconds(5.0f);
+		startText.gameObject.SetActive(false);
 	}
 	
-	// Update is called once per frame
-	void Update () {
-		
-	}
-
-	public void NextScene(){
-		Debug.Log("onClick");
+	private IEnumerator ShowFindMessage() {
+		yield return new WaitForSeconds(2.0f);
+		nextText.gameObject.SetActive(true);
+		yield return new WaitForSeconds(5.0f);
 		SceneManager.LoadScene("Scene3");
+
+	}
+	
+	//
+	private void OnFindBoss()
+	{
+		StartCoroutine(ShowFindMessage());
+	}
+	
+	void Start () {
+		// スタートメッセージ
+		StartCoroutine(ShowStartMessage());
 	}
 }
