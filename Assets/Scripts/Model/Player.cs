@@ -18,6 +18,6 @@ public class Player {
 	public int Score { get; set; }
 
 	public void CreateName(int index) {
-		this.Name = String.Format("{0}#{1}", this.Color.ToString(), index);
+		this.Name = String.Format("{0}#{1:D3}", this.Color.ToString(), index);
 	}
 }

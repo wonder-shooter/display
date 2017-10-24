@@ -33,6 +33,7 @@ public class Scene3Director : MonoBehaviour {
 		gameDirector.AddListenerScreenShot(OnScreenShot);
 		
 		StartCoroutine(PlayBGM());
+		StartCoroutine(ShowStartMessage());
 		StartCoroutine(WaitCountUp());
 	}
 	
@@ -75,7 +76,14 @@ public class Scene3Director : MonoBehaviour {
 	{
 		timer.text = String.Format("{0:D2}:{1:D2}", (int)(t/60), (int)(t%60));
 	}
-	
+
+	private IEnumerator ShowStartMessage()
+	{
+		yield return new WaitForSeconds(1f);
+		StartMessage.gameObject.SetActive(true);
+		yield break;
+	}
+
 	//
 	private IEnumerator PlayBGM()
 	{
@@ -87,9 +95,6 @@ public class Scene3Director : MonoBehaviour {
 		audioSource.clip = BGMs[r];
 		audioSource.Play();
 		
-		yield return new WaitForSeconds(0.5f);
-		StartMessage.gameObject.SetActive(true);
-
 		yield break;
 	}
 	

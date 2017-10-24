@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
@@ -20,15 +21,16 @@ public class GameDirector {
 	private ScreenPositionEvent screenPositionEvent = new ScreenPositionEvent();
 	private TrackerTriggerEvent	trackerTriggerEvent = new TrackerTriggerEvent();
 	
-	private int MaxGameCount = 3;
-
-	private int Number { get; set; }
-	private int GameCount { get; set; }
+	private GameConfigHandler gameConfigHandler = new GameConfigHandler();
+	private GameConfig config;
 
 	private Player[] players;
+	private int gameCount = 0;
 	
 	private GameDirector()
 	{
+		config = gameConfigHandler.Load();
+
 		// デバッグ用
 //		this.AddListenerScreenPositon(this.OnListenScreenPosition);
 	}
@@ -52,12 +54,11 @@ public class GameDirector {
 			}
 			case GameActionEvent.EventType.ChaserModeSceneEnd:
 			{
-				SceneManager.LoadScene(++GameCount > MaxGameCount ? "Scene4" : "Scene2");  
+				SceneManager.LoadScene(++gameCount >= config.Count ? "Scene4" : "Scene2");  
 				break;
 			}
 			case GameActionEvent.EventType.GameEnd:
 			{
-				GameEnd();
 				SceneManager.LoadScene("Scene0");  
 				break;
 			}
@@ -125,15 +126,23 @@ public class GameDirector {
 			new Player(Player.ColorType.Purple),
 		};
 		
-		foreach (var player in this.players) player.CreateName(this.GameCount);
+		foreach (var player in this.players) player.CreateName(this.config.Number);
 
 	}
+	
+	// アクティブプレイヤーの数を返す
+	public int GetActivePlayerCount()
+	{
+		return players.Where(player => player.IsEntry).Count();		
+	}
+	
 	/**
 	 * 
 	 */
-	private void GameEnd()
+	public void GameEnd()
 	{
-		Number++;
+		config.Number++;
+		gameConfigHandler.Save(config);
 	}
 	
 	// デバッグ用

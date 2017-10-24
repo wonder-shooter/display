@@ -15,6 +15,7 @@ public class Scene4Director : MonoBehaviour {
 	void Update () {
 		if (Input.GetMouseButtonDown(0))
 		{
+			gemeDirector.GameEnd();
 			gemeDirector.Action(GameActionEvent.EventType.GameEnd);
 		}	
 	}

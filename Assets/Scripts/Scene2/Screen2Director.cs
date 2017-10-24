@@ -10,9 +10,23 @@ public class Screen2Director : MonoBehaviour {
 	public Text startText;
 	public Text nextText;
 
-	public AudioClip SE_BossFind;
+	public AudioClip BGM;
+	
+	public AudioClip SE_BossFindAll;
+	public AudioClip SE_BossFindOne;
 	
 	private GameDirector gameDirector;
+
+	private IEnumerator StartBGM()
+	{
+		// BGM 再生
+		AudioSource audioSource = GetComponent<AudioSource>();
+		audioSource.loop = true;
+		audioSource.clip = BGM;
+		audioSource.Play();
+		
+		yield break;
+	}
 
 	//
 	private IEnumerator ShowStartMessage() {
@@ -27,7 +41,10 @@ public class Screen2Director : MonoBehaviour {
 		if(startText.gameObject.activeSelf) startText.gameObject.SetActive(false);
 		
 		AudioSource audioSource = GetComponent<AudioSource>();
-		audioSource.PlayOneShot(SE_BossFind);
+		audioSource.Stop();
+		yield return new WaitForSeconds(0.5f);
+
+		audioSource.PlayOneShot(SE_BossFindAll);
 		
 		yield return new WaitForSeconds(2.0f);
 		nextText.gameObject.SetActive(true);
@@ -46,7 +63,10 @@ public class Screen2Director : MonoBehaviour {
 	{
 		gameDirector = GameDirector.GetSheredInstance(); 
 		
+		Debug.Log(gameDirector.GetActivePlayerCount());
+		
 		// スタートメッセージ
+		StartCoroutine(StartBGM());
 		StartCoroutine(ShowStartMessage());
 	}
 
