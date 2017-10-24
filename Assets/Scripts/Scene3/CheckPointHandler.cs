@@ -45,7 +45,7 @@ public class CheckPointHandler : MonoBehaviour {
 		}
 		next = points[current];
 		
-		gemeDirector.AddListener(ListenGameAction);
+		gemeDirector.AddListenerGameAction(ListenGameAction);
 		
 	}
 	

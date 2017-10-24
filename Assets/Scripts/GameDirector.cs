@@ -16,7 +16,6 @@ public class GameDirector {
 	}
 	
 	//
-
 	private GameActionEvent gameActionEvent = new GameActionEvent();
 	private ScreenPositionEvent screenPositionEvent = new ScreenPositionEvent();
 	private TrackerTriggerEvent	trackerTriggerEvent = new TrackerTriggerEvent();
@@ -27,7 +26,6 @@ public class GameDirector {
 	private int GameCount { get; set; }
 
 	private Player[] players;
-	
 	
 	private GameDirector()
 	{
@@ -42,22 +40,22 @@ public class GameDirector {
 	{
 		switch (eventType)
 		{
-			case (GameActionEvent.EventType.TitleSceneEnd) :
+			case GameActionEvent.EventType.TitleSceneEnd:
 			{
 				SceneManager.LoadScene("Scene2");  
 				break;
 			}
-			case (GameActionEvent.EventType.SearchModeSceneEnd) :
+			case GameActionEvent.EventType.SearchModeSceneEnd:
 			{
 				SceneManager.LoadScene("Scene3");  
 				break;
 			}
-			case (GameActionEvent.EventType.ChaserModeSceneEnd) :
+			case GameActionEvent.EventType.ChaserModeSceneEnd:
 			{
 				SceneManager.LoadScene(++GameCount > MaxGameCount ? "Scene4" : "Scene2");  
 				break;
 			}
-			case (GameActionEvent.EventType.GameEnd) :
+			case GameActionEvent.EventType.GameEnd:
 			{
 				GameEnd();
 				SceneManager.LoadScene("Scene0");  
@@ -72,7 +70,7 @@ public class GameDirector {
 	}
 
 	// 
-	public void AddListener(UnityAction<GameActionEvent.EventType> medhod)
+	public void AddListenerGameAction(UnityAction<GameActionEvent.EventType> medhod)
 	{
 		gameActionEvent.AddListener(medhod);
 	}
@@ -84,48 +82,51 @@ public class GameDirector {
 	{
 		screenPositionEvent.AddListener(medhod);
 	}
-	/**
-	 * スクリーンホバーイベント
-	 */
 	public void HoverScreen(Player.ColorType colorType, Vector3 point)
 	{
 		screenPositionEvent.Invoke(colorType, point);
 	}
 	
+	/**
+	* スクリーンショット
+	*/
 	public void AddListenerScreenShot(UnityAction<Player.ColorType> medhod)
 	{
 		trackerTriggerEvent.AddListener(medhod);
 	}
-	
 	public void ShotScreen(Player.ColorType colorType)
 	{
 		trackerTriggerEvent.Invoke(colorType);
 	}
 
 	/**
-	 * 
+	 * エントリー処理
 	 */
 	public void PlayerEntry(Player.ColorType colorType)
 	{
 		foreach (var player in this.players)
 		{
-			if (player.Color == colorType)
-			{
-				player.IsEntry = true;
-			}
+			if (player.Color != colorType) return;
+			
+			player.IsEntry = true;
 		}
 	}
+	
 	/**
 	 * 
 	 */
 	public void GameReset()
 	{
+		// プレイヤー作成
 		this.players = new Player[]
 		{
-			new Player(Player.ColorType.Pink, this.GameCount), 
-			new Player(Player.ColorType.Green, this.GameCount),
-			new Player(Player.ColorType.Purple, this.GameCount),
+			new Player(Player.ColorType.Pink), 
+			new Player(Player.ColorType.Green),
+			new Player(Player.ColorType.Purple),
 		};
+		
+		foreach (var player in this.players) player.CreateName(this.GameCount);
+
 	}
 	/**
 	 * 

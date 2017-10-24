@@ -54011,6 +54011,11 @@ MonoBehaviour:
   - {fileID: 8300000, guid: af5e821a5faf240859889e7ef0880a7c, type: 3}
   - {fileID: 8300000, guid: 8016aa5416858440e8ae279ae7ce0d13, type: 3}
   Whistle: {fileID: 8300000, guid: e097ee7b9ffaa44f39ddf701cb7e5ead, type: 3}
+  SE_Shot: {fileID: 8300000, guid: 1e1852db0e6554eb1ac29f9ac18846dc, type: 3}
+  Scopes:
+  - {fileID: 730081369}
+  - {fileID: 730081369}
+  - {fileID: 1406494572}
   timer: {fileID: 1256493306}
   StartMessage: {fileID: 206537961}
 --- !u!82 &1558371976

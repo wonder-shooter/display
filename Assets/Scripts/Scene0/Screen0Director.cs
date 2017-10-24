@@ -12,19 +12,25 @@ public class Screen0Director : MonoBehaviour
 	// BGM
 	public AudioClip BGM;
 	
-	// クリック音
-	public AudioClip SE_CLICK;
+	// シュート音
+	public AudioClip SE_Shoot;
 
 	// スコープ
 	public RawImage[] Scopes;
 
-	// 受付
+	// カウントダウン
 	public Text Timer;
-	private bool isStartCountDown = false;
-	private float startCount = 10f;
+
+	// タイトル
+	public GameObject TitleArea;
 	
+	
+	private float startCount = 11f;
+	
+	// ゲームハンドラー
 	private GameDirector gameDirector;
 	
+	// BGM スタート
 	private IEnumerator StartBGM()
 	{
 		AudioSource audioSource = GetComponent<AudioSource>();
@@ -33,13 +39,11 @@ public class Screen0Director : MonoBehaviour
 		yield break;
 	}
 
-// Use this for initialization
 	void Start () {
 
 		Timer.gameObject.SetActive(false);
 			
 		gameDirector = GameDirector.GetSheredInstance();
-
 		gameDirector.GameReset();
 			
 		// イベントハンドラー設定
@@ -49,23 +53,21 @@ public class Screen0Director : MonoBehaviour
 		StartCoroutine(StartBGM());
 	}
 
-	
 	// Update is called once per frame
 	void Update () {
 
-		if (isStartCountDown && startCount >= 0f)
+		// エントリー表示中なら
+		if (Timer.gameObject.activeSelf && startCount >= 0f)
 		{
-			if (startCount > 0f)
+			// カウントダウン
+			startCount -= Time.deltaTime;
+			if (startCount < 0f)
 			{
-				startCount -= Time.deltaTime;
-				if (startCount < 1f)
-				{
-					startCount = 0f;
-					gameDirector.Action(GameActionEvent.EventType.TitleSceneEnd);
-					isStartCountDown = false;
-				}
-				Timer.text = String.Format("{0}", (int)(startCount/60));
+				// 0 なったらシーン移動
+				startCount = 0f;
+				gameDirector.Action(GameActionEvent.EventType.TitleSceneEnd);
 			}
+			Timer.text = String.Format("{0}", (int)(startCount));
 		}
 		
 		// デバッグ用 マウス操作
@@ -76,13 +78,7 @@ public class Screen0Director : MonoBehaviour
 		}
 		
 	}
-
 	
-	public IEnumerator OnClickButton()
-	{
-		yield return new WaitForSeconds(0.5f);
-	}
-
 	/**
 	 * スクリーンのHover情報
 	 */
@@ -91,18 +87,23 @@ public class Screen0Director : MonoBehaviour
 		Scopes[(int) colorType].transform.position = point;
 	}
 	
-	// 
+	// シュート 
 	private void OnScreenShot(Player.ColorType colorType)
 	{
+		// シュート音再生
 		AudioSource audioSource = GetComponent<AudioSource>();
-		audioSource.PlayOneShot(SE_CLICK);
+		audioSource.PlayOneShot(SE_Shoot);
 
+		// シュートしたプレイヤーのエントリー
 		gameDirector.PlayerEntry(colorType);
 		
-		if (isStartCountDown == false)
+		// カウントダウン開始していなければ
+		if (Timer.gameObject.activeSelf == false)
 		{
-			isStartCountDown = true;
-			StartCoroutine(OnClickButton());
+			// タイトル非表示
+			TitleArea.SetActive(false);
+			// タイマーON
+			Timer.gameObject.SetActive(true);
 		}
 		
 	}
