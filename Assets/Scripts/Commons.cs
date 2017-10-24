@@ -2,8 +2,22 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Commons : MonoBehaviour {
+public class Commons : MonoBehaviour
+{
+    public enum GameAction
+    {
+        ChaserModeCountStart,    
+        ChaserModeTimeOver,
+    }
 
+
+    public static class ColorCode
+    {
+        public static string Pink = "#f34379";
+        public static string Green = "#30da34";
+        public static string Purple = "#8a3afc";
+    }
+    
     public static Vector3[][] CheckPoints = new Vector3[][]
     {
         new Vector3[]

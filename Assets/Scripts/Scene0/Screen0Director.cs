@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -8,9 +9,22 @@ using UnityEngine.SceneManagement;
 public class Screen0Director : MonoBehaviour
 {
 
+	// BGM
 	public AudioClip BGM;
+	
+	// クリック音
 	public AudioClip SE_CLICK;
 
+	// スコープ
+	public RawImage[] Scopes;
+
+	// 受付
+	public Text Timer;
+	private bool isStartCountDown = false;
+	private float startCount = 10f;
+	
+	private GameDirector gameDirector;
+	
 	private IEnumerator StartBGM()
 	{
 		AudioSource audioSource = GetComponent<AudioSource>();
@@ -22,39 +36,82 @@ public class Screen0Director : MonoBehaviour
 // Use this for initialization
 	void Start () {
 
-		//ピンク イエロー グリーン
+		Timer.gameObject.SetActive(false);
+			
+		gameDirector = GameDirector.GetSheredInstance();
+
+		gameDirector.GameReset();
+			
+		// イベントハンドラー設定
+		gameDirector.AddListenerScreenPositon(OnScreenPosition);
+		gameDirector.AddListenerScreenShot(OnScreenShot);
+		
 		StartCoroutine(StartBGM());
 	}
 
 	
 	// Update is called once per frame
 	void Update () {
+
+		if (isStartCountDown && startCount >= 0f)
+		{
+			if (startCount > 0f)
+			{
+				startCount -= Time.deltaTime;
+				if (startCount < 1f)
+				{
+					startCount = 0f;
+					gameDirector.Action(GameActionEvent.EventType.TitleSceneEnd);
+					isStartCountDown = false;
+				}
+				Timer.text = String.Format("{0}", (int)(startCount/60));
+			}
+		}
+		
+		// デバッグ用 マウス操作
+		gameDirector.HoverScreen(Player.ColorType.Pink, Input.mousePosition);
 		if (Input.GetMouseButtonDown(0))
 		{
-			OnSelct(Input.mousePosition);
+			gameDirector.ShotScreen(Player.ColorType.Pink);
 		}
+		
 	}
 
+	
 	public IEnumerator OnClickButton()
 	{
-		AudioSource audioSource = GetComponent<AudioSource>();
-//		audioSource.Stop();
-		audioSource.PlayOneShot(SE_CLICK);
 		yield return new WaitForSeconds(0.5f);
-		
-		SceneManager.LoadScene("Scene2");
 	}
 
-	public void OnSelct(Vector3 point)
-	{	
-		Debug.Log(point);
-		StartCoroutine(OnClickButton());
+	/**
+	 * スクリーンのHover情報
+	 */
+	private void OnScreenPosition(Player.ColorType colorType, Vector3 point)
+	{
+		Scopes[(int) colorType].transform.position = point;
+	}
+	
+	// 
+	private void OnScreenShot(Player.ColorType colorType)
+	{
+		AudioSource audioSource = GetComponent<AudioSource>();
+		audioSource.PlayOneShot(SE_CLICK);
+
+		gameDirector.PlayerEntry(colorType);
+		
+		if (isStartCountDown == false)
+		{
+			isStartCountDown = true;
+			StartCoroutine(OnClickButton());
+		}
+		
 	}
 
 	private void test()
 	{
 		// メインカメラからクリックしたポジションに向かってRayを撃つ。
 		Ray ray = Camera.main.ScreenPointToRay(new Vector3());
+//		Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 		RaycastHit hit = new RaycastHit();
 				
 		// シーンビューにRayを可視化するデバッグ（必要がなければ消してOK）

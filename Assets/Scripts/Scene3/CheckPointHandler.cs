@@ -12,14 +12,29 @@ public class CheckPointHandler : MonoBehaviour {
 	private int current = 0;
 	private bool isMove = false;
 
-	private IEnumerator StartTimer()
+	private GameDirector gemeDirector;
+
+	private void ListenGameAction(GameActionEvent.EventType eventType)
 	{
-		yield return new WaitForSeconds(5.0f);
-		isMove = true;
+		Debug.Log(eventType);
+		
+		switch (eventType)
+		{
+			case GameActionEvent.EventType.ChaserModeCountStart:
+				isMove = true;
+				return;
+			case GameActionEvent.EventType.ChaserModeCountEnd:
+				isMove = false;
+				return;		
+			default:
+				return;
+		}
 	}
-	
+
 	void Start ()
 	{
+		gemeDirector = GameDirector.GetSheredInstance();		
+		
 		points = Commons.CheckPoints[Random.Range(0, Commons.CheckPoints.Length)];
 
 		transform.position = points[0] - transform.forward;
@@ -29,8 +44,9 @@ public class CheckPointHandler : MonoBehaviour {
 			Instantiate(BlockPrefab, point, Quaternion.identity);
 		}
 		next = points[current];
-
-		StartCoroutine(StartTimer());
+		
+		gemeDirector.AddListener(ListenGameAction);
+		
 	}
 	
 	// Update is called once per frame

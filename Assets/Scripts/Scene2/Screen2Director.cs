@@ -10,6 +10,8 @@ public class Screen2Director : MonoBehaviour {
 	public Text startText;
 	public Text nextText;
 	
+	private GameDirector gameDirector;
+
 	private IEnumerator ShowStartMessage() {
 		yield return new WaitForSeconds(0.5f);
 		startText.gameObject.SetActive(true);
@@ -21,8 +23,7 @@ public class Screen2Director : MonoBehaviour {
 		yield return new WaitForSeconds(2.0f);
 		nextText.gameObject.SetActive(true);
 		yield return new WaitForSeconds(5.0f);
-		SceneManager.LoadScene("Scene3");
-
+		gameDirector.Action(GameActionEvent.EventType.SearchModeSceneEnd);
 	}
 	
 	//
@@ -31,8 +32,20 @@ public class Screen2Director : MonoBehaviour {
 		StartCoroutine(ShowFindMessage());
 	}
 	
-	void Start () {
+	void Start ()
+	{
+		gameDirector = GameDirector.GetSheredInstance(); 
+		
 		// スタートメッセージ
 		StartCoroutine(ShowStartMessage());
+	}
+
+	private void Update()
+	{
+		if (Input.GetMouseButtonDown(0))
+		{
+			OnFindBoss();
+		}
+
 	}
 }

@@ -2,5 +2,4 @@
 using UnityEngine.Events;
 
 [System.Serializable]
-public class TrackerPositionEvent : UnityEvent<Tracker> {
-}
+public class TrackerPositionEvent : UnityEvent<Tracker> {}
