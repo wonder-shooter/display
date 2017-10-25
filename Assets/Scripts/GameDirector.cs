@@ -26,7 +26,7 @@ public class GameDirector {
 
 	private Player[] players;
 	private int gameCount = 0;
-	
+	private readonly int pointUnit = 10;
 	private GameDirector()
 	{
 		config = gameConfigHandler.Load();
@@ -113,6 +113,18 @@ public class GameDirector {
 		}
 	}
 	
+	public void AddScore(Player.ColorType colorType)
+	{
+		Player player = players.Where(p => p.Color == colorType).SingleOrDefault();
+		player.Score += pointUnit;
+	}
+	
+	public int GetScore(Player.ColorType colorType)
+	{
+		Player player = players.Where(p => p.Color == colorType).SingleOrDefault();
+		return player.Score;
+	}
+	
 	/**
 	 * 
 	 */
@@ -133,6 +145,7 @@ public class GameDirector {
 	// アクティブプレイヤーの数を返す
 	public int GetActivePlayerCount()
 	{
+		if (players == null) return 0;
 		return players.Where(player => player.IsEntry).Count();		
 	}
 	

@@ -14,7 +14,9 @@ public class Scene3Director : MonoBehaviour {
 	public AudioClip SE_Shot;
 	
 	public RawImage[] Scopes;
-	
+	public Text[] Scores;
+	public Texture2D[] SplashImages;
+
 	public Text timer;
 	public Text StartMessage;
 
@@ -67,8 +69,26 @@ public class Scene3Director : MonoBehaviour {
 
 	private void OnScreenShot(Player.ColorType colorType)
 	{
+		var index = (int) colorType;
 		AudioSource audioSource = GetComponent<AudioSource>();
 		audioSource.PlayOneShot(SE_Shot);
+		
+		Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+		RaycastHit hit = new RaycastHit();
+            
+		if (Physics.Raycast(ray, out hit))
+		{
+			InkSplashShaderBehavior script = hit.collider.gameObject.GetComponent<InkSplashShaderBehavior>();
+			if (null != script){
+				
+				script.PaintOn(hit.textureCoord, SplashImages[index]);
+				
+				gameDirector.AddScore(colorType);
+				int score = gameDirector.GetScore(colorType);
+				Scores[index].text = String.Format("{0}", score);
+			}
+		}
+		
 	}
 	
 	//

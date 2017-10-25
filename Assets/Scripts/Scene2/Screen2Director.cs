@@ -9,11 +9,16 @@ public class Screen2Director : MonoBehaviour {
 
 	public Text startText;
 	public Text nextText;
-
+	
+	public Camera camera;
+	public Light MainLight;
+	
 	public AudioClip BGM;
 	
 	public AudioClip SE_BossFindAll;
 	public AudioClip SE_BossFindOne;
+
+	public Light[] SpotLights; 
 	
 	private GameDirector gameDirector;
 
@@ -49,8 +54,35 @@ public class Screen2Director : MonoBehaviour {
 		yield return new WaitForSeconds(2.0f);
 		nextText.gameObject.SetActive(true);
 		
-		yield return new WaitForSeconds(5.0f);
+		yield return new WaitForSeconds(2f);
+		MainLight.gameObject.SetActive(true);
+		
+		yield return new WaitForSeconds(2f);
 		gameDirector.Action(GameActionEvent.EventType.SearchModeSceneEnd);
+		
+		yield break;
+	}
+	
+	/**
+	 * スクリーンのHover情報
+	 */
+	private void OnScreenPosition(Player.ColorType colorType, Vector3 point)
+	{
+		Light light = SpotLights[(int) colorType]; 
+
+		// メインカメラから選択したポジションに向かってRayを撃つ。
+		Ray ray = camera.ScreenPointToRay(point);
+		RaycastHit hit = new RaycastHit();
+		
+		if (Physics.Raycast(ray, out hit, 1000f))
+		{
+			GameObject selectedGameObject = hit.collider.gameObject;
+			string hitTag = hit.collider.tag;
+			
+			light.transform.LookAt(selectedGameObject.transform);
+			
+		}
+		
 	}
 	
 	// 
@@ -63,7 +95,10 @@ public class Screen2Director : MonoBehaviour {
 	{
 		gameDirector = GameDirector.GetSheredInstance(); 
 		
-		Debug.Log(gameDirector.GetActivePlayerCount());
+		// イベントハンドラー設定
+		gameDirector.AddListenerScreenPositon(OnScreenPosition);
+
+		MainLight.gameObject.SetActive(false);
 		
 		// スタートメッセージ
 		StartCoroutine(StartBGM());
@@ -72,6 +107,13 @@ public class Screen2Director : MonoBehaviour {
 
 	private void Update()
 	{
+		// デバッグ用 マウス操作
+		gameDirector.HoverScreen(Player.ColorType.Pink, Input.mousePosition);
+		if (Input.GetMouseButtonDown(0))
+		{
+			gameDirector.ShotScreen(Player.ColorType.Pink);
+		}
+		
 		// デバッグ用
 		if (Input.GetMouseButtonDown(0))
 		{

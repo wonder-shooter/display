@@ -8,7 +8,6 @@ using UnityEngine.SceneManagement;
 
 public class Screen0Director : MonoBehaviour
 {
-
 	// BGM
 	public AudioClip BGM;
 	
@@ -87,7 +86,9 @@ public class Screen0Director : MonoBehaviour
 		Scopes[(int) colorType].transform.position = point;
 	}
 	
-	// シュート 
+	/**
+	 * シュート
+	 */
 	private void OnScreenShot(Player.ColorType colorType)
 	{
 		// シュート音再生
