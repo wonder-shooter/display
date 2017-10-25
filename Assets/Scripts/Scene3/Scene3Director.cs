@@ -82,6 +82,7 @@ public class Scene3Director : MonoBehaviour {
 			if (null != script){
 				
 				script.PaintOn(hit.textureCoord, SplashImages[index]);
+				string hitTag = hit.collider.tag;
 				
 				gameDirector.AddScore(colorType);
 				int score = gameDirector.GetScore(colorType);

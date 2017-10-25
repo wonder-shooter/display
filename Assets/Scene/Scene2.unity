@@ -7157,7 +7157,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   startText: {fileID: 146448049}
   nextText: {fileID: 1856113047}
-  camera: {fileID: 930662702}
   MainLight: {fileID: 721226274}
   BGM: {fileID: 8300000, guid: 773a19ea767ee45bcb2ab1783ca7f187, type: 3}
   SE_BossFindAll: {fileID: 8300000, guid: 3b5bf2e911b004349b9833644ae632eb, type: 3}
@@ -33765,7 +33764,7 @@ GameObject:
   - component: {fileID: 930662699}
   m_Layer: 0
   m_Name: Camera
-  m_TagString: Untagged
+  m_TagString: MainCamera
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

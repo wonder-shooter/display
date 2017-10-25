@@ -17,13 +17,14 @@ public class Screen0Director : MonoBehaviour
 	// スコープ
 	public RawImage[] Scopes;
 
-	// カウントダウン
-	public Text Timer;
-
+	
 	// タイトル
 	public GameObject TitleArea;
 	
+	// カウントダウン
+	public Text Timer;
 	
+	// エントリー締め切り
 	private float startCount = 11f;
 	
 	// ゲームハンドラー
@@ -41,7 +42,7 @@ public class Screen0Director : MonoBehaviour
 	void Start () {
 
 		Timer.gameObject.SetActive(false);
-			
+
 		gameDirector = GameDirector.GetSheredInstance();
 		gameDirector.GameReset();
 			
@@ -109,27 +110,4 @@ public class Screen0Director : MonoBehaviour
 		
 	}
 
-	private void test()
-	{
-		// メインカメラからクリックしたポジションに向かってRayを撃つ。
-		Ray ray = Camera.main.ScreenPointToRay(new Vector3());
-//		Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-		RaycastHit hit = new RaycastHit();
-				
-		// シーンビューにRayを可視化するデバッグ（必要がなければ消してOK）
-		Debug.DrawRay(ray.origin, ray.direction * 30.0f, Color.red, 100.0f);
-			
-		if (Physics.Raycast(ray, out hit, 30.0f))
-		{
-			GameObject selectedGameObject = hit.collider.gameObject;
-			string hitTag = hit.collider.tag;
-			Debug.Log(hitTag);
-
-//				TapBehaviour target = selectedGameObject.GetComponent(typeof(TapBehaviour)) as TapBehaviour;
-//				if (target != null)
-//				{
-//					target.TapDown(ref hit);
-//				}
-		}
-	}
 }

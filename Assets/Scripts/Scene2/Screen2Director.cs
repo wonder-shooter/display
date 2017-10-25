@@ -7,21 +7,28 @@ using UnityEngine.SceneManagement;
 
 public class Screen2Director : MonoBehaviour {
 
+	// 開始
 	public Text startText;
+	// 発見次へ
 	public Text nextText;
 	
-	public Camera camera;
+	//メインライト
 	public Light MainLight;
 	
+	// BGM
 	public AudioClip BGM;
 	
+	// 発見音
 	public AudioClip SE_BossFindAll;
 	public AudioClip SE_BossFindOne;
 
+	// スポットライト
 	public Light[] SpotLights; 
 	
+	// ゲームハンドラー
 	private GameDirector gameDirector;
 
+	// BGM開始
 	private IEnumerator StartBGM()
 	{
 		// BGM 再生
@@ -41,23 +48,27 @@ public class Screen2Director : MonoBehaviour {
 		startText.gameObject.SetActive(false);
 	}
 	
+	/**
+	 * モンスター発見
+	 */
 	private IEnumerator ShowFindMessage() {
 		
+		// 開始テキスト非表示
 		if(startText.gameObject.activeSelf) startText.gameObject.SetActive(false);
-		
+		// BGMストップ
 		AudioSource audioSource = GetComponent<AudioSource>();
 		audioSource.Stop();
 		yield return new WaitForSeconds(0.5f);
-
+		// 発見音再生
 		audioSource.PlayOneShot(SE_BossFindAll);
-		
 		yield return new WaitForSeconds(2.0f);
+		// テキスト表示
 		nextText.gameObject.SetActive(true);
-		
 		yield return new WaitForSeconds(2f);
+		// メイン照明ON
 		MainLight.gameObject.SetActive(true);
-		
 		yield return new WaitForSeconds(2f);
+		// 遷移
 		gameDirector.Action(GameActionEvent.EventType.SearchModeSceneEnd);
 		
 		yield break;
@@ -71,14 +82,13 @@ public class Screen2Director : MonoBehaviour {
 		Light light = SpotLights[(int) colorType]; 
 
 		// メインカメラから選択したポジションに向かってRayを撃つ。
-		Ray ray = camera.ScreenPointToRay(point);
+		Ray ray = Camera.main.ScreenPointToRay(point);
 		RaycastHit hit = new RaycastHit();
 		
 		if (Physics.Raycast(ray, out hit, 1000f))
 		{
 			GameObject selectedGameObject = hit.collider.gameObject;
-			string hitTag = hit.collider.tag;
-			
+			// 
 			light.transform.LookAt(selectedGameObject.transform);
 			
 		}

@@ -16,17 +16,23 @@ public class GameDirector {
 		return gameDirector;
 	}
 	
-	//
+	// イベント
 	private GameActionEvent gameActionEvent = new GameActionEvent();
 	private ScreenPositionEvent screenPositionEvent = new ScreenPositionEvent();
 	private TrackerTriggerEvent	trackerTriggerEvent = new TrackerTriggerEvent();
-	
+	// コンフィグ管理
 	private GameConfigHandler gameConfigHandler = new GameConfigHandler();
 	private GameConfig config;
 
+	// プレイヤー
 	private Player[] players;
+	// シュータモード回数
 	private int gameCount = 0;
+	// 点数の単位
 	private readonly int pointUnit = 10;
+	/**
+	 * コンストラクタ
+	 */
 	private GameDirector()
 	{
 		config = gameConfigHandler.Load();
@@ -70,7 +76,7 @@ public class GameDirector {
 		}
 	}
 
-	// 
+	// ゲーム遷移管理アクション
 	public void AddListenerGameAction(UnityAction<GameActionEvent.EventType> medhod)
 	{
 		gameActionEvent.AddListener(medhod);
@@ -113,12 +119,18 @@ public class GameDirector {
 		}
 	}
 	
+	/**
+	 * スコア加算
+	 */
 	public void AddScore(Player.ColorType colorType)
 	{
 		Player player = players.Where(p => p.Color == colorType).SingleOrDefault();
 		player.Score += pointUnit;
 	}
 	
+	/**
+	 * スコア取得
+	 */
 	public int GetScore(Player.ColorType colorType)
 	{
 		Player player = players.Where(p => p.Color == colorType).SingleOrDefault();
