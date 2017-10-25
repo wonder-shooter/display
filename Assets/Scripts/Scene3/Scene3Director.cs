@@ -13,21 +13,33 @@ public class Scene3Director : MonoBehaviour {
 	// 銃音
 	public AudioClip SE_Shot;
 	
+	// スコープ
 	public RawImage[] Scopes;
+	// スコア
 	public Text[] Scores;
+	// スプラッシュ画像
 	public Texture2D[] SplashImages;
 
+	// 右上タイマー
 	public Text timer;
+	// スタートメッセージ
 	public Text StartMessage;
 
+	// ゲームハンドラー
 	private GameDirector gameDirector;
+	// プレイ時間
 	private float playSeconds = 181f;
+	// カウントアップ判定
 	private bool canCount = false;
 
-	// Use this for initialization
+	/**
+	 * Use this for initialization
+	 */
 	void Start () {
+		// スタートメッセージ非表示
 		StartMessage.gameObject.SetActive(false);
-
+		
+		// ゲームハンドラー
 		gameDirector = GameDirector.GetSheredInstance();		
 		
 		// イベントハンドラー設定
@@ -39,8 +51,12 @@ public class Scene3Director : MonoBehaviour {
 		StartCoroutine(WaitCountUp());
 	}
 	
-	// Update is called once per frame
+	/**
+	 * Update is called once per frame
+	 */
 	void Update () {
+		
+		// counter更新
 		if (canCount && playSeconds >= 0f)
 		{
 			playSeconds -= Time.deltaTime;
@@ -62,11 +78,17 @@ public class Scene3Director : MonoBehaviour {
 		}
 	}
 
+	/**
+	 * スクリーンホバー
+	 */
 	private void OnScreenPosition(Player.ColorType colorType, Vector3 point)
 	{
 		Scopes[(int) colorType].transform.position = point;
 	}
 
+	/**
+	 * スクリーンシュート
+	 */
 	private void OnScreenShot(Player.ColorType colorType)
 	{
 		var index = (int) colorType;
@@ -79,7 +101,7 @@ public class Scene3Director : MonoBehaviour {
 		if (Physics.Raycast(ray, out hit))
 		{
 			InkSplashShaderBehavior script = hit.collider.gameObject.GetComponent<InkSplashShaderBehavior>();
-			if (null != script){
+			if (null != script && canCount){
 				
 				script.PaintOn(hit.textureCoord, SplashImages[index]);
 				string hitTag = hit.collider.tag;
