@@ -39,5 +39,5 @@ sysinfo.txt
 .idea
 
 
-Assets/Libs/**
-!Assets/Libs/.gitkeep
+Assets/_Libs/**
+!Assets/_Libs/.gitkeep
