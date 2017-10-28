@@ -28,7 +28,7 @@ public class Scene3Director : MonoBehaviour {
 	// ゲームハンドラー
 	private GameDirector gameDirector;
 	// プレイ時間
-	private float playSeconds = 181f;
+	private float playSeconds = 11f;
 	// カウントアップ判定
 	private bool canCount = false;
 
@@ -45,6 +45,14 @@ public class Scene3Director : MonoBehaviour {
 		// イベントハンドラー設定
 		gameDirector.AddListenerScreenPositon(OnScreenPosition);
 		gameDirector.AddListenerScreenShot(OnScreenShot);
+
+		var players = gameDirector.GetActivePlayer();
+		foreach (var player in players)
+		{
+			int score = player.Score;
+			int index = (int) player.Color;
+			Scores[index].text = String.Format("{0}", score);	
+		}
 		
 		StartCoroutine(PlayBGM());
 		StartCoroutine(ShowStartMessage());
@@ -107,6 +115,7 @@ public class Scene3Director : MonoBehaviour {
 				string hitTag = hit.collider.tag;
 				
 				gameDirector.AddScore(colorType);
+				
 				int score = gameDirector.GetScore(colorType);
 				Scores[index].text = String.Format("{0}", score);
 			}

@@ -30,7 +30,7 @@ public class Commons : MonoBehaviour
             new Vector3(-132f, 1f, 54f), 
             new Vector3(-84f, 1f, 54f), 
             new Vector3(-84f, 1f, 160f), 
-        }, 
+        },
     };
 
     public static float ChaserSpeed = 2f;

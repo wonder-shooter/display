@@ -72,7 +72,7 @@ public class Screen0Director : MonoBehaviour
 		
 		// デバッグ用 マウス操作
 		gameDirector.HoverScreen(Player.ColorType.Pink, Input.mousePosition);
-		if (Input.GetMouseButtonDown(0))
+		if (Input.GetKeyDown(KeyCode.Space))
 		{
 			gameDirector.ShotScreen(Player.ColorType.Pink);
 		}

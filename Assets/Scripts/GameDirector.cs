@@ -154,11 +154,24 @@ public class GameDirector {
 
 	}
 	
+	// アクティブプレイヤーを返す
+	public IEnumerable<Player> GetActivePlayer()
+	{
+		if (players == null) return new List<Player>();
+		return players.Where(player => player.IsEntry);
+	}
+	
+	
 	// アクティブプレイヤーの数を返す
 	public int GetActivePlayerCount()
 	{
 		if (players == null) return 0;
-		return players.Where(player => player.IsEntry).Count();		
+		return GetActivePlayer().Count();		
+	}
+
+	public int GetNumberIndex()
+	{
+		return this.config.Number;
 	}
 	
 	/**

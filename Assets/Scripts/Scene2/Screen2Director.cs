@@ -28,6 +28,8 @@ public class Screen2Director : MonoBehaviour {
 	// ゲームハンドラー
 	private GameDirector gameDirector;
 
+	private bool isFindBoss;
+
 	// BGM開始
 	private IEnumerator StartBGM()
 	{
@@ -43,9 +45,11 @@ public class Screen2Director : MonoBehaviour {
 	//
 	private IEnumerator ShowStartMessage() {
 		yield return new WaitForSeconds(0.5f);
-		startText.gameObject.SetActive(true);
-		yield return new WaitForSeconds(5.0f);
-		startText.gameObject.SetActive(false);
+		if(!nextText.gameObject.activeSelf){
+			startText.gameObject.SetActive(true);
+			yield return new WaitForSeconds(5.0f);
+			startText.gameObject.SetActive(false);
+		}
 	}
 	
 	/**
@@ -55,6 +59,8 @@ public class Screen2Director : MonoBehaviour {
 		
 		// 開始テキスト非表示
 		if(startText.gameObject.activeSelf) startText.gameObject.SetActive(false);
+		if(nextText.gameObject.activeSelf) yield break;
+		
 		// BGMストップ
 		AudioSource audioSource = GetComponent<AudioSource>();
 		audioSource.Stop();
@@ -98,6 +104,8 @@ public class Screen2Director : MonoBehaviour {
 	// 
 	private void OnFindBoss()
 	{
+		if (isFindBoss) return;
+		isFindBoss = true;
 		StartCoroutine(ShowFindMessage());
 	}
 	
@@ -125,6 +133,10 @@ public class Screen2Director : MonoBehaviour {
 		}
 		
 		// デバッグ用
+		if (Input.GetKeyDown(KeyCode.Space))
+		{
+			OnFindBoss();
+		}
 		if (Input.GetMouseButtonDown(0))
 		{
 			OnFindBoss();
