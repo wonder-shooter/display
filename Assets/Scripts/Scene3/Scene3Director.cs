@@ -28,7 +28,7 @@ public class Scene3Director : MonoBehaviour {
 	// ゲームハンドラー
 	private GameDirector gameDirector;
 	// プレイ時間
-	private float playSeconds = 11f;
+	private float playSeconds = 181f;
 	// カウントアップ判定
 	private bool canCount = false;
 
