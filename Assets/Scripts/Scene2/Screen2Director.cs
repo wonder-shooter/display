@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using Random = UnityEngine.Random;
 
 public class Screen2Director : MonoBehaviour {
 
@@ -12,8 +13,8 @@ public class Screen2Director : MonoBehaviour {
 	// 発見次へ
 	public Text nextText;
 	
-	//メインライト
-	public Light MainLight;
+	// 背景
+	public GameObject Background;
 	
 	// BGM
 	public AudioClip BGM;
@@ -23,13 +24,20 @@ public class Screen2Director : MonoBehaviour {
 	public AudioClip SE_BossFindOne;
 
 	// スポットライト
-	public Light[] SpotLights; 
+//	public Light[] SpotLights; 
+	public GameObject[] SpotLights;
 	
 	// ゲームハンドラー
 	private GameDirector gameDirector;
 
 	private bool isFindBoss;
 
+	private int maskPadding = 50;
+	private Vector2[] targets = new Vector2[]
+	{
+		new Vector2(), new Vector2(), new Vector2(),   
+	};
+	
 	// BGM開始
 	private IEnumerator StartBGM()
 	{
@@ -45,11 +53,12 @@ public class Screen2Director : MonoBehaviour {
 	//
 	private IEnumerator ShowStartMessage() {
 		yield return new WaitForSeconds(0.5f);
-		if(!nextText.gameObject.activeSelf){
+		if(!isFindBoss){
 			startText.gameObject.SetActive(true);
 			yield return new WaitForSeconds(5.0f);
 			startText.gameObject.SetActive(false);
 		}
+		yield break;
 	}
 	
 	/**
@@ -72,7 +81,7 @@ public class Screen2Director : MonoBehaviour {
 		nextText.gameObject.SetActive(true);
 		yield return new WaitForSeconds(2f);
 		// メイン照明ON
-		MainLight.gameObject.SetActive(true);
+		Background.gameObject.SetActive(false);
 		yield return new WaitForSeconds(2f);
 		// 遷移
 		gameDirector.Action(GameActionEvent.EventType.SearchModeSceneEnd);
@@ -84,21 +93,20 @@ public class Screen2Director : MonoBehaviour {
 	 * スクリーンのHover情報
 	 */
 	private void OnScreenPosition(Player.ColorType colorType, Vector3 point)
-	{
-		Light light = SpotLights[(int) colorType]; 
-
+	{		
 		// メインカメラから選択したポジションに向かってRayを撃つ。
 		Ray ray = Camera.main.ScreenPointToRay(point);
 		RaycastHit hit = new RaycastHit();
-		
-		if (Physics.Raycast(ray, out hit, 1000f))
+		if (Physics.Raycast(ray, out hit))
 		{
-			GameObject selectedGameObject = hit.collider.gameObject;
-			// 
-			light.transform.LookAt(selectedGameObject.transform);
-			
+			GameObject light = SpotLights[(int) colorType]; 
+			GameObject hitedGameObject = hit.collider.gameObject;
+			if (hitedGameObject.tag == "MaskScreen")
+			{
+				light.transform.position = hit.point;
+				light.transform.position = new Vector3(hit.point.x, hit.point.y, light.transform.position.z);	
+			}
 		}
-		
 	}
 	
 	// 
@@ -116,7 +124,15 @@ public class Screen2Director : MonoBehaviour {
 		// イベントハンドラー設定
 		gameDirector.AddListenerScreenPositon(OnScreenPosition);
 
-		MainLight.gameObject.SetActive(false);
+		var players = gameDirector.GetActivePlayer();
+		foreach (var player in players)
+		{
+			int targetX = Random.Range(maskPadding, Screen.width - maskPadding);
+			int targetY = Random.Range(maskPadding, Screen.height - maskPadding);
+
+			targets[(int)player.Color] = new Vector2(targetX, targetY);
+			Debug.Log(targets[(int)player.Color]);
+		}
 		
 		// スタートメッセージ
 		StartCoroutine(StartBGM());
@@ -130,17 +146,12 @@ public class Screen2Director : MonoBehaviour {
 		if (Input.GetMouseButtonDown(0))
 		{
 			gameDirector.ShotScreen(Player.ColorType.Pink);
-		}
+		}	
 		
 		// デバッグ用
 		if (Input.GetKeyDown(KeyCode.Space))
 		{
 			OnFindBoss();
 		}
-		if (Input.GetMouseButtonDown(0))
-		{
-			OnFindBoss();
-		}
-
 	}
 }
