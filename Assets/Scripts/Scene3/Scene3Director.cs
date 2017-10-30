@@ -109,9 +109,11 @@ public class Scene3Director : MonoBehaviour {
 		if (Physics.Raycast(ray, out hit))
 		{
 			InkSplashShaderBehavior script = hit.collider.gameObject.GetComponent<InkSplashShaderBehavior>();
+			SpScene3People hitscript = hit.collider.gameObject.GetComponentInParent<SpScene3People>();
 			if (null != script && canCount){
 				
 				script.PaintOn(hit.textureCoord, SplashImages[index]);
+				hitscript.DieOn();
 				string hitTag = hit.collider.tag;
 				
 				gameDirector.AddScore(colorType);
