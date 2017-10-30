@@ -146,7 +146,7 @@ public class Screen2Director : MonoBehaviour {
 		if (Input.GetMouseButtonDown(0))
 		{
 			gameDirector.ShotScreen(Player.ColorType.Pink);
-		}	
+		}
 		
 		// デバッグ用
 		if (Input.GetKeyDown(KeyCode.Space))
