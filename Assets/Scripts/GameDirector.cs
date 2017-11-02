@@ -93,6 +93,7 @@ public class GameDirector {
 	}
 	public void HoverScreen(Player.ColorType colorType, Vector3 position)
 	{
+		Debug.Log(position);
 		screenPositionEvent.Invoke(colorType, position);
 	}
     /*
@@ -204,9 +205,11 @@ public class GameDirector {
 	 */
 	public Player GetPlayer(Player.ColorType type)
 	{
-		if (players == null) return null;
+		if (players == null)
+		{
+			players = new Player[0];
+		}
 		return players.Where(player => player.Color == type).FirstOrDefault();
-		
 	}
 	
 	// アクティブプレイヤーを返す
