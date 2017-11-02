@@ -41,3 +41,5 @@ sysinfo.txt
 
 Assets/_Libs/**
 !Assets/_Libs/.gitkeep
+
+Assets/.gitignore
