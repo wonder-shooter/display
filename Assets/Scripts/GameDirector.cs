@@ -199,13 +199,22 @@ public class GameDirector {
 
 	}
 	
+	/**
+	 * 
+	 */
+	public Player GetPlayer(Player.ColorType type)
+	{
+		if (players == null) return null;
+		return players.Where(player => player.Color == type).FirstOrDefault();
+		
+	}
+	
 	// アクティブプレイヤーを返す
 	public IEnumerable<Player> GetActivePlayer()
 	{
 		if (players == null) return new List<Player>();
 		return players.Where(player => player.IsEntry);
 	}
-	
 	
 	// アクティブプレイヤーの数を返す
 	public int GetActivePlayerCount()

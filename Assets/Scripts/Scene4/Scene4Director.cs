@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Networking;
+
 
 public class Scene4Director : MonoBehaviour
 {
@@ -58,6 +60,45 @@ public class Scene4Director : MonoBehaviour
 	}
 
 	/**
+	 * 
+	 */
+	private IEnumerator PostScore()
+	{	
+		string Url = "http://wondershooter.net/score";
+
+		Player pinkPlayer = gameDirector.GetPlayer(Player.ColorType.Pink);
+		Player greenPlayer = gameDirector.GetPlayer(Player.ColorType.Green);
+		Player purplePlayer = gameDirector.GetPlayer(Player.ColorType.Purple);
+		
+		string JsonArrayBase = "[{\"name\":\"{0}\",\"score\":{1}},{\"name\":\"{2}\",\"score\":{3}},{\"name\":\"{4}\",\"score\":{5}}]";
+		string JsonArraystring = String.Format(JsonArrayBase, pinkPlayer.Name, pinkPlayer.Score, greenPlayer.Name, greenPlayer.Score,
+			purplePlayer.Name, purplePlayer.Score);
+		
+		Debug.Log(JsonArraystring);
+		
+		Dictionary<string, string> headers = new Dictionary<string, string>();
+		headers.Add("Content-Type", "application/json");
+		byte[] body = System.Text.Encoding.UTF8.GetBytes(JsonArraystring);
+		WWW result = new WWW(Url, body, headers);
+		StartCoroutine("PostdataEnumerator", result);
+		
+		yield break;
+	}
+
+	IEnumerator PostdataEnumerator(WWW result)
+	{
+		yield return result;
+		if (result.error != null)
+		{
+			Debug.Log("Data Submitted");
+		}
+		else
+		{
+			Debug.Log(result.error);
+		}
+	}
+	
+	/**
 	 * Use this for initialization
 	 */
 	void Start () {
@@ -65,6 +106,7 @@ public class Scene4Director : MonoBehaviour
 		Areas.gameObject.SetActive(false);
 		gameDirector = GameDirector.GetSheredInstance();
 		
+		StartCoroutine(PostScore());
 		StartCoroutine(PlayBGM());
 	}
 	
