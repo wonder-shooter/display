@@ -8,6 +8,7 @@ using UnityEngine.SceneManagement;
 
 public class Screen0Director : MonoBehaviour
 {
+
 	// BGM
 	public AudioClip BGM;
 	
@@ -17,9 +18,10 @@ public class Screen0Director : MonoBehaviour
 	// スコープ
 	public RawImage[] Scopes;
 
-	
-	// タイトル
-	public GameObject TitleArea;
+    public Texture2D[] SplashImages;
+
+    // タイトル
+    public GameObject TitleArea;
 	
 	// カウントダウン
 	public Text Timer;
@@ -45,16 +47,18 @@ public class Screen0Director : MonoBehaviour
 
 		gameDirector = GameDirector.GetSheredInstance();
 		gameDirector.GameReset();
-			
-		// イベントハンドラー設定
-		gameDirector.AddListenerScreenPositon(OnScreenPosition);
+
+        SteamVR.instance.hmd.ResetSeatedZeroPose();
+
+        // イベントハンドラー設定
+        gameDirector.AddListenerScreenPositon(OnScreenPosition);
 		gameDirector.AddListenerScreenShot(OnScreenShot);
-		
-		StartCoroutine(StartBGM());
+
+        StartCoroutine(StartBGM());
 	}
 
-	// Update is called once per frame
-	void Update () {
+    // Update is called once per frame
+    void Update () {
 
 		// エントリー表示中なら
 		if (Timer.gameObject.activeSelf && startCount >= 0f)
@@ -69,28 +73,47 @@ public class Screen0Director : MonoBehaviour
 			}
 			Timer.text = String.Format("{0}", (int)(startCount));
 		}
-		
-		// デバッグ用 マウス操作
-		gameDirector.HoverScreen(Player.ColorType.Pink, Input.mousePosition);
+
+
+        // デバッグ用 マウス操作
+        var mousePos = Input.mousePosition;
+        mousePos.z = 0.1f;
+        var point = Camera.main.ScreenToWorldPoint(mousePos);
+        gameDirector.HoverScreen(Player.ColorType.Pink, point);
 		if (Input.GetKeyDown(KeyCode.Space))
 		{
-			gameDirector.ShotScreen(Player.ColorType.Pink);
+			gameDirector.ShotScreen(Player.ColorType.Pink, point);
 		}
-		
-	}
+
+        if (Input.GetMouseButtonDown(0))
+        {
+            float distance = 100; // 飛ばす&表示するRayの長さ
+            float duration = 3;   // 表示期間（秒）
+
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            Debug.DrawRay(ray.origin, ray.direction * distance, Color.red, duration, false);
+
+            RaycastHit hit = new RaycastHit();
+            if (Physics.Raycast(ray, out hit, distance))
+            {
+                GameObject hitObject = hit.collider.gameObject;
+                // （以下略）
+            }
+        }
+    }
 	
 	/**
 	 * スクリーンのHover情報
 	 */
-	private void OnScreenPosition(Player.ColorType colorType, Vector3 point)
+	private void OnScreenPosition(Player.ColorType colorType, Vector3 position)
 	{
-		Scopes[(int) colorType].transform.position = point;
+        Scopes[(int) colorType].transform.position = Camera.main.WorldToScreenPoint(position);
 	}
 	
 	/**
 	 * シュート
 	 */
-	private void OnScreenShot(Player.ColorType colorType)
+	private void OnScreenShot(Player.ColorType colorType, Vector3 position)
 	{
 		// シュート音再生
 		AudioSource audioSource = GetComponent<AudioSource>();
@@ -107,7 +130,24 @@ public class Screen0Director : MonoBehaviour
 			// タイマーON
 			Timer.gameObject.SetActive(true);
 		}
-		
-	}
+
+        var index = (int)colorType;
+
+        Ray ray = Camera.main.ScreenPointToRay(Camera.main.WorldToScreenPoint(position));
+        //Ray ray = new Ray(position, Camera.main.transform.forward);
+        RaycastHit hit = new RaycastHit();
+
+        if (Physics.Raycast(ray, out hit))
+        {
+            InkSplashShaderBehavior script = hit.collider.gameObject.GetComponent<InkSplashShaderBehavior>();
+            if (null != script)
+            {
+
+                script.PaintOn(hit.textureCoord, SplashImages[index]);
+                
+            }
+        }
+
+    }
 
 }

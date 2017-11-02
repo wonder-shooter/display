@@ -24,12 +24,12 @@ public class Screen2Director : MonoBehaviour {
 	public AudioClip SE_BossFindOne;
 
 	// スポットライト
-//	public Light[] SpotLights; 
 	public GameObject[] SpotLights;
 	
 	// ゲームハンドラー
 	private GameDirector gameDirector;
 
+    // ボス発見フラグ
 	private bool isFindBoss;
 
 	private int maskPadding = 50;
@@ -37,6 +37,8 @@ public class Screen2Director : MonoBehaviour {
 	{
 		new Vector2(), new Vector2(), new Vector2(),   
 	};
+    // プレイヤーごとのターゲット発見フラグ(Activeなプレイヤーがいればfalse)
+    private bool[] isTargetsFind = new bool[] { true, true, true };
 	
 	// BGM開始
 	private IEnumerator StartBGM()
@@ -92,25 +94,38 @@ public class Screen2Director : MonoBehaviour {
 	/**
 	 * スクリーンのHover情報
 	 */
-	private void OnScreenPosition(Player.ColorType colorType, Vector3 point)
-	{		
-		// メインカメラから選択したポジションに向かってRayを撃つ。
-		Ray ray = Camera.main.ScreenPointToRay(point);
+	private void OnScreenPosition(Player.ColorType colorType, Vector3 position)
+	{
+        SpotLights[(int)colorType].transform.position = position;
+        return;
+
+        // メインカメラから選択したポジションに向かってRayを撃つ。
+        Ray ray = new Ray(Camera.main.WorldToScreenPoint(position), Camera.main.transform.forward);
 		RaycastHit hit = new RaycastHit();
+
 		if (Physics.Raycast(ray, out hit))
 		{
 			GameObject light = SpotLights[(int) colorType]; 
 			GameObject hitedGameObject = hit.collider.gameObject;
 			if (hitedGameObject.tag == "MaskScreen")
 			{
-				light.transform.position = hit.point;
-				light.transform.position = new Vector3(hit.point.x, hit.point.y, light.transform.position.z);	
+                light.transform.position = hit.point;
+                //light.transform.position = new Vector3(hit.point.x, hit.point.y, light.transform.position.z);	
 			}
 		}
 	}
-	
-	// 
-	private void OnFindBoss()
+
+    /**
+	 * シュート
+	 */
+    private void OnScreenShot(Player.ColorType colorType, Vector3 position)
+    {
+        // 
+        OnFindBoss();
+    }
+
+    // 
+    private void OnFindBoss()
 	{
 		if (isFindBoss) return;
 		isFindBoss = true;
@@ -119,12 +134,13 @@ public class Screen2Director : MonoBehaviour {
 	
 	void Start ()
 	{
-		gameDirector = GameDirector.GetSheredInstance(); 
-		
-		// イベントハンドラー設定
-		gameDirector.AddListenerScreenPositon(OnScreenPosition);
+		gameDirector = GameDirector.GetSheredInstance();
 
-		var players = gameDirector.GetActivePlayer();
+        // イベントハンドラー設定
+        gameDirector.AddListenerScreenPositon(OnScreenPosition);
+        gameDirector.AddListenerScreenShot(OnScreenShot);
+
+        var players = gameDirector.GetActivePlayer();
 		foreach (var player in players)
 		{
 			int targetX = Random.Range(maskPadding, Screen.width - maskPadding);
@@ -141,11 +157,14 @@ public class Screen2Director : MonoBehaviour {
 
 	private void Update()
 	{
-		// デバッグ用 マウス操作
-		gameDirector.HoverScreen(Player.ColorType.Pink, Input.mousePosition);
+        // デバッグ用 マウス操作
+        var mousePos = Input.mousePosition;
+        mousePos.z = 0.1f;
+        var point = Camera.main.ScreenToWorldPoint(mousePos);
+        gameDirector.HoverScreen(Player.ColorType.Pink, point);
 		if (Input.GetMouseButtonDown(0))
 		{
-			gameDirector.ShotScreen(Player.ColorType.Pink);
+			gameDirector.ShotScreen(Player.ColorType.Pink, point);
 		}	
 		
 		// デバッグ用

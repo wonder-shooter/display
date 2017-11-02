@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -19,7 +20,8 @@ public class GameDirector {
 	// イベント
 	private GameActionEvent gameActionEvent = new GameActionEvent();
 	private ScreenPositionEvent screenPositionEvent = new ScreenPositionEvent();
-	private TrackerTriggerEvent	trackerTriggerEvent = new TrackerTriggerEvent();
+	private ScreenTriggerEvent	screenTriggerEvent = new ScreenTriggerEvent();
+    private TrackerViverationEvent trackerViverationEvent = new TrackerViverationEvent();
 	// コンフィグ管理
 	private GameConfigHandler gameConfigHandler = new GameConfigHandler();
 	private GameConfig config;
@@ -82,34 +84,76 @@ public class GameDirector {
 		gameActionEvent.AddListener(medhod);
 	}
 
-	/**
+    /**
 	 * スクリーンホバー
 	 */
-	public void AddListenerScreenPositon(UnityAction<Player.ColorType, Vector3> medhod)
+    public void AddListenerScreenPositon(UnityAction<Player.ColorType, Vector3> medhod)
 	{
 		screenPositionEvent.AddListener(medhod);
 	}
-	public void HoverScreen(Player.ColorType colorType, Vector3 point)
+	public void HoverScreen(Player.ColorType colorType, Vector3 position)
 	{
-		screenPositionEvent.Invoke(colorType, point);
+		screenPositionEvent.Invoke(colorType, position);
 	}
-	
-	/**
+    /*
+     * TrackedControllerHover
+     */
+    public void HoverTracker(Tracker tracker)
+    {
+        screenPositionEvent.Invoke(this.ConvertColorType(tracker.Type), tracker.Position);
+    }
+
+    /**
 	* スクリーンショット
 	*/
-	public void AddListenerScreenShot(UnityAction<Player.ColorType> medhod)
+    public void AddListenerScreenShot(UnityAction<Player.ColorType, Vector3> medhod)
 	{
-		trackerTriggerEvent.AddListener(medhod);
+        screenTriggerEvent.AddListener(medhod);
 	}
-	public void ShotScreen(Player.ColorType colorType)
+	public void ShotScreen(Player.ColorType colorType, Vector3 position)
 	{
-		trackerTriggerEvent.Invoke(colorType);
+        screenTriggerEvent.Invoke(colorType, position);
 	}
+    /*
+     * TrackedControllerトリガーショット
+     */
+    public void ShotTracker(Tracker tracker)
+    {
+        Debug.Log(tracker.Type);
+        Debug.Log(tracker.Position);
+        screenTriggerEvent.Invoke(this.ConvertColorType(tracker.Type), tracker.Position);
 
-	/**
+    }
+
+    private Player.ColorType ConvertColorType(Tracker.DeviceType deviceType)
+    {
+        switch (deviceType)
+        {
+            case (Tracker.DeviceType.GreenTracker):
+                return Player.ColorType.Green;
+            //case (Tracker.DeviceType.PurpleTracker):
+            //case (Tracker.DeviceType.LeftController):
+            case (Tracker.DeviceType.RightController):
+                return Player.ColorType.Purple;
+            case (Tracker.DeviceType.PinkTracker):
+            default:
+                return Player.ColorType.Pink;
+        }
+    }
+
+
+    /**
+	 * スクリーンホバー
+	 */
+    public void AddListenerViveration(UnityAction<Tracker.DeviceType> medhod)
+    {
+        trackerViverationEvent.AddListener(medhod);
+    }
+
+    /**
 	 * エントリー処理
 	 */
-	public void PlayerEntry(Player.ColorType colorType)
+    public void PlayerEntry(Player.ColorType colorType)
 	{
 		foreach (var player in this.players)
 		{
@@ -124,16 +168,17 @@ public class GameDirector {
 	 */
 	public void AddScore(Player.ColorType colorType)
 	{
-		Player player = players.Where(p => p.Color == colorType).SingleOrDefault();
-		player.Score += pointUnit;
+		Player player = players.Where(p => p.Color == colorType).Single();
+        if(player != null)
+		    player.Score += pointUnit;
 	}
-	
-	/**
+
+    /**
 	 * スコア取得
 	 */
-	public int GetScore(Player.ColorType colorType)
+    public int GetScore(Player.ColorType colorType)
 	{
-		Player player = players.Where(p => p.Color == colorType).SingleOrDefault();
+		Player player = players.Where(p => p.Color == colorType).Single();
 		return player.Score;
 	}
 	

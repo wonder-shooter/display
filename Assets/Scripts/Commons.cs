@@ -7,10 +7,8 @@ public class Commons : MonoBehaviour
     public enum GameAction
     {
         ChaserModeCountStart,    
-        ChaserModeTimeOver,
+        ChaserModeTimeOver,    
     }
-
-
     public static class ColorCode
     {
         public static string Pink = "#f34379";

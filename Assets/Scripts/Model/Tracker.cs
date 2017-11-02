@@ -1,29 +1,29 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using UnityEngine;
 
 public class Tracker {
-	public string TrackerID {
-		get; set;
-	}
-	public float X {
-		get; set;
-	}
-	public float Y {
-		get; set;
-	}
-	public float Z {
-		get; set;
-	}
-	public float Yaw {
-		get; set;
-	}
-	public float Pitch {
-		get; set;
-	}
-	public float Roll {
-		get; set;
-	}
-	public int Degree {
-		get; set;
-	}
+    public enum DeviceType
+    {
+        LeftController,
+        RightController,
+        PinkTracker,
+        GreenTracker,
+        PurpleTracker,
+    }
+
+    private Tracker() { }
+    public Tracker(DeviceType type, Vector3 position) {
+        this.Type = type;
+        this.Position = position;
+    }
+
+    public DeviceType Type{
+        get; private set;
+    }
+
+    public Vector3 Position
+    {
+        get; private set;
+    }
 }

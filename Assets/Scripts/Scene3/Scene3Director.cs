@@ -3,10 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.VR;
 using Random = UnityEngine.Random;
 
 public class Scene3Director : MonoBehaviour {
-
+    
 	public AudioClip[] BGMs;
 	public AudioClip Whistle;
 
@@ -25,8 +26,11 @@ public class Scene3Director : MonoBehaviour {
 	// スタートメッセージ
 	public Text StartMessage;
 
-	// ゲームハンドラー
-	private GameDirector gameDirector;
+    // インクが衝突するレイヤー
+    public LayerMask InkedRayrMask;
+
+    // ゲームハンドラー
+    private GameDirector gameDirector;
 	// プレイ時間
 	private float playSeconds = 181f;
 	// カウントアップ判定
@@ -56,7 +60,9 @@ public class Scene3Director : MonoBehaviour {
 		
 		StartCoroutine(PlayBGM());
 		StartCoroutine(ShowStartMessage());
-		StartCoroutine(WaitCountUp());
+        // 
+        SteamVR.instance.hmd.ResetSeatedZeroPose();
+        StartCoroutine(WaitCountUp());
 	}
 	
 	/**
@@ -77,36 +83,70 @@ public class Scene3Director : MonoBehaviour {
 			}
 			UpdateCounter((int)playSeconds);
 		}
-		
-		// デバッグ用 マウス操作
-		gameDirector.HoverScreen(Player.ColorType.Pink, Input.mousePosition);
-		if (Input.GetMouseButtonDown(0))
-		{
-			gameDirector.ShotScreen(Player.ColorType.Pink);
-		}
-	}
+
+
+        // 着席モードでRキーで位置トラッキングをリセットする
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            SteamVR.instance.hmd.ResetSeatedZeroPose();
+        }
+
+
+        // デバッグ用 マウス操作
+        var mousePos = Input.mousePosition;
+        mousePos.z = 0.1f;
+        var point = Camera.main.ScreenToWorldPoint(mousePos);
+        gameDirector.HoverScreen(Player.ColorType.Pink, point);
+        if (Input.GetMouseButtonDown(0))
+        {
+            gameDirector.ShotScreen(Player.ColorType.Pink, point);
+
+            //Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            Ray ray = Camera.main.ScreenPointToRay(Camera.main.WorldToScreenPoint(point));
+
+            RaycastHit hit = new RaycastHit();
+
+            if (Physics.Raycast(ray, out hit))
+            {
+                InkSplashShaderBehavior script = hit.collider.gameObject.GetComponent<InkSplashShaderBehavior>();
+                if (null != script && canCount)
+                {
+                    var colorType = Player.ColorType.Pink;
+                    var index = (int)colorType;
+                    script.PaintOn(hit.textureCoord, SplashImages[index]);
+                    string hitTag = hit.collider.tag;
+
+                    gameDirector.AddScore(colorType);
+
+                    int score = gameDirector.GetScore(colorType);
+                    Scores[index].text = String.Format("{0}", score);
+                }
+            }            
+        }
+    }
 
 	/**
 	 * スクリーンホバー
 	 */
-	private void OnScreenPosition(Player.ColorType colorType, Vector3 point)
+	private void OnScreenPosition(Player.ColorType colorType, Vector3 position)
 	{
-		Scopes[(int) colorType].transform.position = point;
+		Scopes[(int) colorType].transform.position = Camera.main.WorldToScreenPoint(position);
 	}
 
 	/**
 	 * スクリーンシュート
 	 */
-	private void OnScreenShot(Player.ColorType colorType)
+	private void OnScreenShot(Player.ColorType colorType, Vector3 position)
 	{
 		var index = (int) colorType;
 		AudioSource audioSource = GetComponent<AudioSource>();
 		audioSource.PlayOneShot(SE_Shot);
-		
-		Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+
+        Ray ray = Camera.main.ScreenPointToRay(Camera.main.WorldToScreenPoint(position));
+        //Ray ray = new Ray(position, Camera.main.transform.forward);
 		RaycastHit hit = new RaycastHit();
             
-		if (Physics.Raycast(ray, out hit))
+		if (Physics.Raycast(ray, out hit, 20f, InkedRayrMask))
 		{
 			InkSplashShaderBehavior script = hit.collider.gameObject.GetComponent<InkSplashShaderBehavior>();
 			if (null != script && canCount){
