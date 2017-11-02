@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -32,6 +33,7 @@ public class Screen2Director : MonoBehaviour {
     // ボス発見フラグ
 	private bool isFindBoss;
 
+	// 敵探索
 	private int maskPadding = 50;
 	private Vector2[] targets = new Vector2[]
 	{
@@ -96,23 +98,15 @@ public class Screen2Director : MonoBehaviour {
 	 */
 	private void OnScreenPosition(Player.ColorType colorType, Vector3 position)
 	{
-        SpotLights[(int)colorType].transform.position = position;
-        return;
+		int color = (int) colorType;
+		if (isTargetsFind[color]) return;
 
-        // メインカメラから選択したポジションに向かってRayを撃つ。
-        Ray ray = new Ray(Camera.main.WorldToScreenPoint(position), Camera.main.transform.forward);
-		RaycastHit hit = new RaycastHit();
-
-		if (Physics.Raycast(ray, out hit))
-		{
-			GameObject light = SpotLights[(int) colorType]; 
-			GameObject hitedGameObject = hit.collider.gameObject;
-			if (hitedGameObject.tag == "MaskScreen")
-			{
-                light.transform.position = hit.point;
-                //light.transform.position = new Vector3(hit.point.x, hit.point.y, light.transform.position.z);	
-			}
-		}
+		// Light移動
+		SpotLights[color].transform.position = position;
+		
+		
+		
+		
 	}
 
     /**
@@ -139,38 +133,42 @@ public class Screen2Director : MonoBehaviour {
         // イベントハンドラー設定
         gameDirector.AddListenerScreenPositon(OnScreenPosition);
         gameDirector.AddListenerScreenShot(OnScreenShot);
-
-        var players = gameDirector.GetActivePlayer();
-		foreach (var player in players)
+		
+		// ボス対象位置設定
+		foreach (Player.ColorType color in Enum.GetValues(typeof(Player.ColorType)))
 		{
+			// 
+			Player player = gameDirector.GetPlayer(color);
+			if (player.IsEntry)
+			{
+				isTargetsFind[(int) color] = false;
+			}
 			int targetX = Random.Range(maskPadding, Screen.width - maskPadding);
 			int targetY = Random.Range(maskPadding, Screen.height - maskPadding);
 
 			targets[(int)player.Color] = new Vector2(targetX, targetY);
 			Debug.Log(targets[(int)player.Color]);
 		}
-		
+
 		// スタートメッセージ
 		StartCoroutine(StartBGM());
 		StartCoroutine(ShowStartMessage());
 	}
 
-	private void Update()
+	void Update()
 	{
         // デバッグ用 マウス操作
         var mousePos = Input.mousePosition;
         mousePos.z = 0.1f;
         var point = Camera.main.ScreenToWorldPoint(mousePos);
         gameDirector.HoverScreen(Player.ColorType.Pink, point);
-		if (Input.GetMouseButtonDown(0))
-		{
-			gameDirector.ShotScreen(Player.ColorType.Pink, point);
-		}	
-		
-		// デバッグ用
 		if (Input.GetKeyDown(KeyCode.Space))
 		{
 			OnFindBoss();
 		}
+		//		if (Input.GetMouseButtonDown(0))
+		//		{
+		//			gameDirector.ShotScreen(Player.ColorType.Pink, point);
+		//		}	
 	}
 }

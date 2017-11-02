@@ -48,7 +48,8 @@ public class Screen0Director : MonoBehaviour
 		gameDirector = GameDirector.GetSheredInstance();
 		gameDirector.GameReset();
 
-        SteamVR.instance.hmd.ResetSeatedZeroPose();
+		if(SteamVR.instance != null && SteamVR.instance.hmd != null)
+        	SteamVR.instance.hmd.ResetSeatedZeroPose();
 
         // イベントハンドラー設定
         gameDirector.AddListenerScreenPositon(OnScreenPosition);
@@ -73,7 +74,6 @@ public class Screen0Director : MonoBehaviour
 			}
 			Timer.text = String.Format("{0}", (int)(startCount));
 		}
-
 
         // デバッグ用 マウス操作
         var mousePos = Input.mousePosition;
