@@ -578,6 +578,7 @@ GameObject:
   - component: {fileID: 95346492484551436}
   - component: {fileID: 114709771069684884}
   - component: {fileID: 114656648077376212}
+  - component: {fileID: 114843211063726176}
   m_Layer: 8
   m_Name: Scene3_Doctor_Black
   m_TagString: Untagged
@@ -1164,6 +1165,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1838320db48e94f9b8633b8c319290fc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &114843211063726176
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1953739107486026}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 10a37ae17dd394218a53dcf786199f9f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!137 &137177805412265776
