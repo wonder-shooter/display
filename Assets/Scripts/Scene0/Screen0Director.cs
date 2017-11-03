@@ -56,7 +56,13 @@ public class Screen0Director : MonoBehaviour
 		gameDirector.AddListenerScreenShot(OnScreenShot);
 
         StartCoroutine(StartBGM());
-	}
+
+
+        Player pinkPlayer = gameDirector.GetPlayer(Player.ColorType.Pink);
+        Player greenPlayer = gameDirector.GetPlayer(Player.ColorType.Green);
+        Player purplePlayer = gameDirector.GetPlayer(Player.ColorType.Purple);
+   
+    }
 
     // Update is called once per frame
     void Update () {

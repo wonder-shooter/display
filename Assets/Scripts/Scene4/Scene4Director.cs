@@ -70,13 +70,12 @@ public class Scene4Director : MonoBehaviour
 		Player greenPlayer = gameDirector.GetPlayer(Player.ColorType.Green);
 		Player purplePlayer = gameDirector.GetPlayer(Player.ColorType.Purple);
 		
-		string JsonArrayBase = "[{\"name\":\"{0}\",\"score\":{1}},{\"name\":\"{2}\",\"score\":{3}},{\"name\":\"{4}\",\"score\":{5}}]";
-		string JsonArraystring = String.Format(JsonArrayBase, pinkPlayer.Name, pinkPlayer.Score, greenPlayer.Name, greenPlayer.Score,
-			purplePlayer.Name, purplePlayer.Score);
-		
-		Debug.Log(JsonArraystring);
-		
-		Dictionary<string, string> headers = new Dictionary<string, string>();
+		//string JsonArrayBase = "[{\"name\":\"{0}\",\"score\":{1}},{\"name\":\"{2}\",\"score\":{3}},{\"name\":\"{4}\",\"score\":{5}}]";
+		//string JsonArraystring = String.Format(JsonArrayBase, pinkPlayer.Name, pinkPlayer.Score, greenPlayer.Name, greenPlayer.Score,//
+		//	purplePlayer.Name, purplePlayer.Score);
+        string JsonArraystring = "[{\"name\":\"" + pinkPlayer.Name + "\",\"score\":" + pinkPlayer.Score + "},{\"name\":\"" + greenPlayer.Name + "\",\"score\":" + greenPlayer.Score + "},{\"name\":\"" + purplePlayer.Name + "\",\"score\":" + purplePlayer.Score + "}]";
+
+        Dictionary<string, string> headers = new Dictionary<string, string>();
 		headers.Add("Content-Type", "application/json");
 		byte[] body = System.Text.Encoding.UTF8.GetBytes(JsonArraystring);
 		WWW result = new WWW(Url, body, headers);
