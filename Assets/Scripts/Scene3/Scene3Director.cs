@@ -29,6 +29,14 @@ public class Scene3Director : MonoBehaviour {
     // インクが衝突するレイヤー
     public LayerMask InkedRayrMask;
 
+    // 敵ベース
+    public GameObject[] TargetPrefabs;
+
+    //
+    public GameObject TargetBasePosition;
+
+    /*  */
+
     // ゲームハンドラー
     private GameDirector gameDirector;
 	// プレイ時間
@@ -36,10 +44,21 @@ public class Scene3Director : MonoBehaviour {
 	// カウントアップ判定
 	private bool canCount = false;
 
+    // 敵の数
+    private readonly int instansNumber = 100;
+    // 敵の場所振り幅
+    private readonly float targetPosRam = 150f;
+    private List<GameObject> targetInstance = new List<GameObject>();
+
 	/**
 	 * Use this for initialization
 	 */
 	void Start () {
+
+        // 
+        StartCoroutine(TargetCreate());
+
+
 		// スタートメッセージ非表示
 		StartMessage.gameObject.SetActive(false);
 		
@@ -143,11 +162,10 @@ public class Scene3Director : MonoBehaviour {
 		audioSource.PlayOneShot(SE_Shot);
 
         Ray ray = Camera.main.ScreenPointToRay(Camera.main.WorldToScreenPoint(position));
-        //Ray ray = new Ray(position, Camera.main.transform.forward);
-		RaycastHit hit = new RaycastHit();
-            
-		if (Physics.Raycast(ray, out hit, 20f, InkedRayrMask))
+		RaycastHit hit = new RaycastHit();            
+		if (Physics.Raycast(ray, out hit, 30f, InkedRayrMask))
 		{
+            // 敵にヒット
 			InkSplashShaderBehavior script = hit.collider.gameObject.GetComponent<InkSplashShaderBehavior>();
 			if (null != script && canCount){
 				
@@ -173,8 +191,33 @@ public class Scene3Director : MonoBehaviour {
 	{
 		timer.text = String.Format("{0:D2}:{1:D2}", (int)(t/60), (int)(t%60));
 	}
+    //
+    private IEnumerator TargetCreate()
+    {
+        for(var i = 0; i < instansNumber; i++)
+        {
+            
+            GameObject prefabs = TargetPrefabs[Random.Range(0, TargetPrefabs.Length)];
+            if (TargetBasePosition != null)
+            {
+                float x = Random.Range(0f - targetPosRam, targetPosRam);
+                float z = Random.Range(0f - targetPosRam, targetPosRam);
 
-	private IEnumerator ShowStartMessage()
+                var pos = new Vector3(x, 0, z);
+                var tar = Instantiate(prefabs, TargetBasePosition.transform.position - new Vector3(x, 0, z), Quaternion.identity, TargetBasePosition.transform);
+                targetInstance.Add(tar);
+                tar.transform.LookAt(Camera.main.transform);
+            }
+            else
+            {
+                var tar = Instantiate(prefabs, Vector3.zero, Quaternion.identity);
+            }
+        }
+
+        yield break;
+    }
+    //
+    private IEnumerator ShowStartMessage()
 	{
 		yield return new WaitForSeconds(1f);
 		StartMessage.gameObject.SetActive(true);
