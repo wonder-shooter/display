@@ -120,9 +120,16 @@ public class GameDirector {
      */
     public void ShotTracker(Tracker tracker)
     {
-        Debug.Log(tracker.Type);
-        Debug.Log(tracker.Position);
         screenTriggerEvent.Invoke(this.ConvertColorType(tracker.Type), tracker.Position);
+
+    }
+
+    /**
+     * tracker vive 
+     */
+    public void TriggerViveTracker(Player.ColorType colorType)
+    {
+        trackerViverationEvent.Invoke(ConvertDeviceType(colorType));
 
     }
 
@@ -142,6 +149,22 @@ public class GameDirector {
         }
     }
 
+    private Tracker.DeviceType ConvertDeviceType(Player.ColorType colorType)
+    {
+        switch (colorType)
+        {
+            case (Player.ColorType.Pink):
+                return Tracker.DeviceType.PinkTracker;
+            //case (Tracker.DeviceType.PurpleTracker):
+            //case (Tracker.DeviceType.LeftController):
+            case (Player.ColorType.Green):
+                return Tracker.DeviceType.GreenTracker;
+            case (Player.ColorType.Purple):
+            default:
+                return Tracker.DeviceType.PurpleTracker;
+        }
+    }
+
 
     /**
 	 * スクリーンホバー
@@ -156,12 +179,8 @@ public class GameDirector {
 	 */
     public void PlayerEntry(Player.ColorType colorType)
 	{
-		foreach (var player in this.players)
-		{
-			if (player.Color != colorType) return;
-			
-			player.IsEntry = true;
-		}
+        var player = this.GetPlayer(colorType);
+        player.IsEntry = true;
 	}
 	
 	/**

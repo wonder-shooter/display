@@ -26,24 +26,33 @@ public class Screen2Director : MonoBehaviour {
 
 	// スポットライト
 	public GameObject[] SpotLights;
-	
-	// ゲームハンドラー
-	private GameDirector gameDirector;
+
+    // TargetPrefab
+    public GameObject TargetPrefab;
+
+    public GameObject[] TargetObject;
+
+    // ゲームハンドラー
+    private GameDirector gameDirector;
 
     // ボス発見フラグ
 	private bool isFindBoss;
 
-	// 敵探索
-	private int maskPadding = 50;
+    // 敵探索
+    private readonly int maskPadding = 50;
 	private Vector2[] targets = new Vector2[]
 	{
 		new Vector2(), new Vector2(), new Vector2(),   
 	};
     // プレイヤーごとのターゲット発見フラグ(Activeなプレイヤーがいればfalse)
     private bool[] isTargetsFind = new bool[] { true, true, true };
-	
-	// BGM開始
-	private IEnumerator StartBGM()
+
+    // 
+    private readonly int area = 50;
+
+
+    // BGM開始
+    private IEnumerator StartBGM()
 	{
 		// BGM 再生
 		AudioSource audioSource = GetComponent<AudioSource>();
@@ -86,9 +95,24 @@ public class Screen2Director : MonoBehaviour {
 		yield return new WaitForSeconds(2f);
 		// メイン照明ON
 		Background.gameObject.SetActive(false);
-		yield return new WaitForSeconds(2f);
-		// 遷移
-		gameDirector.Action(GameActionEvent.EventType.SearchModeSceneEnd);
+
+		yield return new WaitForSeconds(0.5f);
+
+        foreach( GameObject target in TargetObject)
+        {
+            if (target.activeSelf)
+            {
+                SpScene2 hitscript = target.GetComponentInParent<SpScene2>();
+                if(hitscript != null) { 
+                    hitscript.HeadUp();
+                }
+            }
+        }
+
+        yield return new WaitForSeconds(2f);
+
+        // 遷移
+        gameDirector.Action(GameActionEvent.EventType.SearchModeSceneEnd);
 		
 		yield break;
 	}
@@ -98,16 +122,44 @@ public class Screen2Director : MonoBehaviour {
 	 */
 	private void OnScreenPosition(Player.ColorType colorType, Vector3 position)
 	{
-		int color = (int) colorType;
-		if (isTargetsFind[color]) return;
+		int index = (int) colorType;
+		if (isTargetsFind[index]) return;
 
-		// Light移動
-		SpotLights[color].transform.position = position;
-		
-		
-		
-		
-	}
+        // Light移動
+        SpotLights[index].transform.position = position;
+
+        var screenPoint = Camera.main.WorldToScreenPoint(position);
+        if (IsAreaTarget(colorType, screenPoint)) {
+            var pos = new Vector3(position.x, position.y, position.z);
+            //TargetObject[index].transform.position = pos;
+            //TargetObject[index].transform.Translate(Camera.main.transform.forward * 10);
+            isTargetsFind[index] = true;
+
+            gameDirector.TriggerViveTracker(colorType);
+
+            bool findBoss = true;
+            foreach(bool find in isTargetsFind)
+            {
+                if (!find)
+                {
+                    findBoss = false;
+                    break;
+                }
+            }
+            if (findBoss) {
+                this.OnFindBoss();
+            }
+        }
+    }
+
+    private bool IsAreaTarget( Player.ColorType color, Vector2 current)
+    {
+        var index = (int)color;
+        var target = this.targets[index];
+        return (target.x - area < current.x && current.x < target.x + area
+            && target.y - area < current.y && current.y < target.y + area);
+
+    }
 
     /**
 	 * シュート
@@ -115,7 +167,7 @@ public class Screen2Director : MonoBehaviour {
     private void OnScreenShot(Player.ColorType colorType, Vector3 position)
     {
         // 
-        OnFindBoss();
+        // OnFindBoss();
     }
 
     // 
@@ -129,29 +181,44 @@ public class Screen2Director : MonoBehaviour {
 	void Start ()
 	{
 		gameDirector = GameDirector.GetSheredInstance();
-
+        var tes = gameDirector.GetActivePlayer();
         // イベントハンドラー設定
         gameDirector.AddListenerScreenPositon(OnScreenPosition);
         gameDirector.AddListenerScreenShot(OnScreenShot);
-		
-		// ボス対象位置設定
-		foreach (Player.ColorType color in Enum.GetValues(typeof(Player.ColorType)))
+        
+        // ボス対象位置設定
+        foreach (Player.ColorType color in Enum.GetValues(typeof(Player.ColorType)))
 		{
-			// 
-			Player player = gameDirector.GetPlayer(color);
-			if (player.IsEntry)
-			{
-				isTargetsFind[(int) color] = false;
-			}
+            var index = (int)color;
+			
 			int targetX = Random.Range(maskPadding, Screen.width - maskPadding);
 			int targetY = Random.Range(maskPadding, Screen.height - maskPadding);
+            var targetPoint = new Vector2(targetX, targetY);
+            targets[index] = targetPoint;
 
-			targets[(int)player.Color] = new Vector2(targetX, targetY);
-			Debug.Log(targets[(int)player.Color]);
-		}
+            if(TargetPrefab != null) {
+                // ターゲット自動生成（不動）
+                //TargetObject[index] = Instantiate(TargetPrefab, Camera.main.ScreenToWorldPoint(targetPoint), Quaternion.identity);
+                //TargetObject[index].transform.LookAt(Camera.main.transform.position);
+                //var distanse = TargetObject[index].transform.position - Camera.main.transform.position;
+                //TargetObject[index].transform.Translate(Camera.main.transform.forward * 10);
+            }
 
-		// スタートメッセージ
-		StartCoroutine(StartBGM());
+            // 
+            Player player = gameDirector.GetPlayer(color);
+            if (player.IsEntry)
+            {
+                isTargetsFind[index] = false;
+                if (TargetObject[index] != null) { 
+                    TargetObject[index].SetActive(true);
+                    TargetObject[index].transform.LookAt(Camera.main.transform.position);
+                }
+
+            }
+        }
+
+        // スタートメッセージ
+        StartCoroutine(StartBGM());
 		StartCoroutine(ShowStartMessage());
 	}
 
