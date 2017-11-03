@@ -5,8 +5,10 @@ using UnityEngine;
 
 public class ShooterHandler : MonoBehaviour {
 
+    public LayerMask ShotScreen;
+
     SteamVR_TrackedController trackedController;
-    GameDirector gameDirector;
+    private GameDirector gameDirector; 
 
     void Start()
     {
@@ -38,7 +40,7 @@ public class ShooterHandler : MonoBehaviour {
         var transform = trackedController.transform;
         Ray ray = new Ray(transform.position, transform.forward);
         RaycastHit hit = new RaycastHit();
-        if (Physics.Raycast(ray, out hit))
+        if (Physics.Raycast(ray, out hit, 20f, ShotScreen))
         {
             try
             {
@@ -65,8 +67,13 @@ public class ShooterHandler : MonoBehaviour {
     {
         if(type.ToString() == this.trackedController.name)
         {
+            // 未割り当て時 int へのキャストでエラーとなる
+            if (trackedController.controllerIndex > 20) return;
+
             var device = SteamVR_Controller.Input((int)trackedController.controllerIndex);
-            device.TriggerHapticPulse(1000);
+            if (device != null) {
+                device.TriggerHapticPulse(1000);
+            }
         }
     }
 
@@ -89,18 +96,15 @@ public class ShooterHandler : MonoBehaviour {
         
         Ray ray = new Ray(transform.position, transform.forward);
         RaycastHit hit = new RaycastHit();
-        if (Physics.Raycast(ray, out hit))
+        if (Physics.Raycast(ray, out hit, 20f, ShotScreen))
         {
-            //Rayの可視化（デバッグ用）
-            Debug.DrawLine(Camera.main.transform.position, hit.point, Color.red);
-            Debug.DrawRay(hit.point, hit.normal, Color.green);
-
             try
             {
                 var deviceType = (Tracker.DeviceType)Enum.Parse(typeof(Tracker.DeviceType), this.name, true);
 
                 if (hit.collider.tag == "MaskScreen")
                 {
+                    Debug.Log("hit");
                     var pos = new Vector3(hit.point.x, hit.point.y, hit.point.z);
                     gameDirector.ShotTracker(new Tracker(deviceType, pos));
                 }

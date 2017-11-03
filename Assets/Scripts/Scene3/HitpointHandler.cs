@@ -5,7 +5,7 @@ using UnityEngine;
 public class HitpointHandler : MonoBehaviour {
 
     private int hitCount = 0;
-    private int hitPoint = 10;
+    private int hitPoint = 5;
 	// Use this for initialization
 	void Start () {
 		

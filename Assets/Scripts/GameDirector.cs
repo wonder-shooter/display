@@ -93,7 +93,6 @@ public class GameDirector {
 	}
 	public void HoverScreen(Player.ColorType colorType, Vector3 position)
 	{
-		Debug.Log(position);
 		screenPositionEvent.Invoke(colorType, position);
 	}
     /*

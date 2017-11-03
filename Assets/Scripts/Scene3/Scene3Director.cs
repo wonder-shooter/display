@@ -45,7 +45,7 @@ public class Scene3Director : MonoBehaviour {
 	private bool canCount = false;
 
     // 敵の数
-    private readonly int instansNumber = 100;
+    private readonly int instansNumber = 300;
     // 敵の場所振り幅
     private readonly float targetPosRam = 150f;
     private List<GameObject> targetInstance = new List<GameObject>();
@@ -122,7 +122,6 @@ public class Scene3Director : MonoBehaviour {
         {
             gameDirector.ShotScreen(Player.ColorType.Pink, point);
 
-            //Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             Ray ray = Camera.main.ScreenPointToRay(Camera.main.WorldToScreenPoint(point));
 
             RaycastHit hit = new RaycastHit();
@@ -151,6 +150,7 @@ public class Scene3Director : MonoBehaviour {
 	 */
 	private void OnScreenPosition(Player.ColorType colorType, Vector3 position)
 	{
+        Debug.Log(position);
 		Scopes[(int) colorType].transform.position = Camera.main.WorldToScreenPoint(position);
 	}
 
