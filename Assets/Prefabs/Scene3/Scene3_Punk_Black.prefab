@@ -576,9 +576,9 @@ GameObject:
   m_Component:
   - component: {fileID: 4112757806311980}
   - component: {fileID: 95751747943126022}
-  - component: {fileID: 114110137718778752}
   - component: {fileID: 114549301579839696}
   - component: {fileID: 114744585074385538}
+  - component: {fileID: 114095217360794392}
   m_Layer: 8
   m_Name: Scene3_Punk_Black
   m_TagString: Untagged
@@ -1145,7 +1145,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce9866b2011b70245beb43ca6e186fa8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &114110137718778752
+--- !u!114 &114095217360794392
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -1153,7 +1153,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1983180986633898}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 356b80c2298fa41e999a0e611a16f8ba, type: 3}
+  m_Script: {fileID: 11500000, guid: 10a37ae17dd394218a53dcf786199f9f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &114549301579839696

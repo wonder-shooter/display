@@ -51,9 +51,9 @@ GameObject:
   m_Component:
   - component: {fileID: 4886551471417998}
   - component: {fileID: 95928278757025194}
-  - component: {fileID: 114978474766336940}
   - component: {fileID: 114873673610335472}
   - component: {fileID: 114428119850702818}
+  - component: {fileID: 114313297862145372}
   m_Layer: 8
   m_Name: Scene3_Prostitute_White
   m_TagString: Untagged
@@ -1134,6 +1134,17 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
+--- !u!114 &114313297862145372
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1037727925480238}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 10a37ae17dd394218a53dcf786199f9f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &114373601141197880
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1165,17 +1176,6 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1838320db48e94f9b8633b8c319290fc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &114978474766336940
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1037727925480238}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 088cc68a5761748b7860f294062caead, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!137 &137139215710917880
