@@ -53,6 +53,7 @@ GameObject:
   - component: {fileID: 95928278757025194}
   - component: {fileID: 114978474766336940}
   - component: {fileID: 114873673610335472}
+  - component: {fileID: 114428119850702818}
   m_Layer: 8
   m_Name: Scene3_Prostitute_White
   m_TagString: Untagged
@@ -1142,6 +1143,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ce9866b2011b70245beb43ca6e186fa8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &114428119850702818
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1037727925480238}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2eae68757adfbf4479f2976c8115c473, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &114873673610335472

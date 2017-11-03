@@ -191,6 +191,7 @@ GameObject:
   - component: {fileID: 95298960679162662}
   - component: {fileID: 114031617213219236}
   - component: {fileID: 114003879705259466}
+  - component: {fileID: 114804750305455872}
   m_Layer: 8
   m_Name: Scene3_RoadWorker_White
   m_TagString: Untagged
@@ -1153,6 +1154,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4dcc709979194460d896cbc8503cdfaa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &114804750305455872
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1283496528750708}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2eae68757adfbf4479f2976c8115c473, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &114822973242590488

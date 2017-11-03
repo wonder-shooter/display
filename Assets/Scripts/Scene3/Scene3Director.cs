@@ -50,6 +50,8 @@ public class Scene3Director : MonoBehaviour {
     private readonly float targetPosRam = 150f;
     private List<GameObject> targetInstance = new List<GameObject>();
 
+    private readonly float scopeRange = 30f;
+
 	/**
 	 * Use this for initialization
 	 */
@@ -163,7 +165,7 @@ public class Scene3Director : MonoBehaviour {
 
         Ray ray = Camera.main.ScreenPointToRay(Camera.main.WorldToScreenPoint(position));
 		RaycastHit hit = new RaycastHit();            
-		if (Physics.Raycast(ray, out hit, 30f, InkedRayrMask))
+		if (Physics.Raycast(ray, out hit, scopeRange, InkedRayrMask))
 		{
             // 敵にヒット
 			InkSplashShaderBehavior script = hit.collider.gameObject.GetComponent<InkSplashShaderBehavior>();
@@ -171,9 +173,21 @@ public class Scene3Director : MonoBehaviour {
 				
 				script.PaintOn(hit.textureCoord, SplashImages[index]);
                 SpScene3People hitscript = hit.collider.gameObject.GetComponentInParent<SpScene3People>();
+                HitpointHandler hitpointHandler = hit.collider.gameObject.GetComponentInParent<HitpointHandler>();
+                
                 if (hitscript != null)
                 {
-                    hitscript.DieOn();
+                    if (hitpointHandler != null)
+                    {
+                        hitpointHandler.Hit();
+                        if (hitpointHandler.isDie()) {
+                            hitscript.DieOn();
+                        }
+                    }
+                    else
+                    {
+                        hitscript.DieOn();
+                    }
                 }
 				string hitTag = hit.collider.tag;
 				
@@ -206,13 +220,19 @@ public class Scene3Director : MonoBehaviour {
                 var pos = new Vector3(x, 0, z);
                 var tar = Instantiate(prefabs, TargetBasePosition.transform.position - new Vector3(x, 0, z), Quaternion.identity, TargetBasePosition.transform);
                 targetInstance.Add(tar);
-                tar.transform.LookAt(Camera.main.transform);
+                Vector3 cameraP = Camera.main.transform.position;
+                tar.transform.LookAt(new Vector3(cameraP.x, 0,  cameraP.z));
             }
             else
             {
                 var tar = Instantiate(prefabs, Vector3.zero, Quaternion.identity);
             }
         }
+
+
+        // camera lookat
+        yield return new WaitForSeconds(5f);
+        StartCoroutine(TargetLookAtCamera());
 
         yield break;
     }
@@ -224,8 +244,19 @@ public class Scene3Director : MonoBehaviour {
 		yield break;
 	}
 
-	//
-	private IEnumerator PlayBGM()
+
+    private IEnumerator TargetLookAtCamera()
+    {
+        foreach (GameObject target in targetInstance) {
+            Vector3 cameraP = Camera.main.transform.position;
+            target.transform.LookAt(new Vector3(cameraP.x, 0, cameraP.z));
+        }
+
+        yield return new WaitForSeconds(5f);
+        StartCoroutine(TargetLookAtCamera());
+    }
+        //
+        private IEnumerator PlayBGM()
 	{
 		yield return new WaitForSeconds(0.5f);
 		// n, m-1まで
